@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: chatty-backend
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./backend/.env
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: chatty-frontend
+    ports:
+      - "3000:80"  # Nginx serves frontend on port 80
+    environment:
+      - VITE_API_URL=http://backend:5001  # 👈 this is the magic line
+    depends_on:
+      - backend
+    restart: always
